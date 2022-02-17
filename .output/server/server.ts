@@ -1,3 +1,4 @@
+import { builder } from '@netlify/functions';
 import 'unenv/runtime/polyfill/fetch.node';
 import { withQuery } from 'ufo';
 import { createApp, useBase } from 'h3';
@@ -114,7 +115,7 @@ const localFetch = createFetch(localCall, globalThis.fetch);
 const $fetch = createFetch$1({ fetch: localFetch });
 globalThis.$fetch = $fetch;
 
-async function handler(event, context) {
+async function handler$1(event, context) {
   const r = await localCall({
     event,
     url: withQuery(event.path, event.queryStringParameters),
@@ -130,5 +131,7 @@ async function handler(event, context) {
     body: r.body.toString()
   };
 }
+
+const handler = builder(handler$1);
 
 export { handler };

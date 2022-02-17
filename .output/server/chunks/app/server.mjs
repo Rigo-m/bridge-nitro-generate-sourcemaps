@@ -416,7 +416,7 @@ function hasOwn(obj, key) {
 
 function assert(condition, msg) {
   if (!condition) {
-    throw new Error("[vue-composition-api] " + msg);
+    throw new Error("[vue-composition-api] ".concat(msg));
   }
 }
 
@@ -564,10 +564,14 @@ function __read(o, n) {
   return ar;
 }
 
-function __spreadArray(to, from) {
-  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
-
-  return to;
+function __spreadArray(to, from, pack) {
+  if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+    if (ar || !(i in from)) {
+      if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+      ar[i] = from[i];
+    }
+  }
+  return to.concat(ar || Array.prototype.slice.call(from));
 }
 /**
  * Displays a warning message (using console.error) with a stack trace if the
@@ -747,7 +751,8 @@ function isVue(obj) {
 }
 
 function isVueRegistered(Vue) {
-  return hasOwn(Vue, PluginInstalledFlag);
+  // resolve issue: https://github.com/vuejs/composition-api/issues/876#issue-1087619365
+  return vueConstructor && hasOwn(Vue, PluginInstalledFlag);
 }
 
 function getVueConstructor() {
@@ -824,7 +829,7 @@ function toVue3ComponentInstance(vm) {
   instanceProps.forEach(function (prop) {
     proxy(instance, prop, {
       get: function () {
-        return vm["$" + prop];
+        return vm["$".concat(prop)];
       }
     });
   });
@@ -1026,6 +1031,16 @@ function set$1(target, key, val) {
   return val;
 }
 
+var _isForceTrigger = false;
+
+function isForceTrigger() {
+  return _isForceTrigger;
+}
+
+function setForceTrigger(v) {
+  _isForceTrigger = v;
+}
+
 var RefImpl =
 /** @class */
 function () {
@@ -1142,7 +1157,9 @@ function shallowRef(raw) {
 
 function triggerRef(value) {
   if (!isRef(value)) return;
+  setForceTrigger(true);
   value.value = value.value;
+  setForceTrigger(false);
 }
 
 function proxyRefs(objectWithRefs) {
@@ -1373,7 +1390,6 @@ function shallowReactive(obj) {
   }
 
   var observed = observe(isArray(obj) ? [] : {});
-  setupAccessControl(observed);
   var ob = observed.__ob__;
 
   var _loop_1 = function (key) {
@@ -1403,6 +1419,8 @@ function shallowReactive(obj) {
         var _a;
 
         if (getter && !setter) return;
+        var value = getter ? getter.call(obj) : val;
+        if (!isForceTrigger() && value === newVal) return;
 
         if (setter) {
           setter.call(obj, newVal);
@@ -1597,7 +1615,7 @@ function del(target, key) {
 }
 
 var genName = function (name) {
-  return "on" + (name[0].toUpperCase() + name.slice(1));
+  return "on".concat(name[0].toUpperCase() + name.slice(1));
 };
 
 function createLifeCycle(lifeCyclehook) {
@@ -1731,7 +1749,7 @@ function queueFlushJob(vm, fn, mode) {
       break;
 
     default:
-      assert(false, "flush must be one of [\"post\", \"pre\", \"sync\"], but got " + mode);
+      assert(false, "flush must be one of [\"post\", \"pre\", \"sync\"], but got ".concat(mode));
       break;
   }
 }
@@ -1808,7 +1826,7 @@ function createWatcher(vm, source, cb, options) {
       }
 
       return queueFlushJob(vm, function () {
-        fn.apply(void 0, __spreadArray([], __read(args)));
+        fn.apply(void 0, __spreadArray([], __read(args), false));
       }, flushMode);
     };
   }; // effect watch
@@ -2149,7 +2167,7 @@ function inject(key, defaultValue, treatDefaultAsFactory) {
   }
 
   if (defaultValue === undefined && "production" !== 'production') {
-    warn$1("Injection \"" + String(key) + "\" not found", vm);
+    warn$1("Injection \"".concat(String(key), "\" not found"), vm);
   }
 
   return treatDefaultAsFactory && isFunction(defaultValue) ? defaultValue() : defaultValue;
@@ -2556,7 +2574,7 @@ function mixin(Vue) {
       };
 
       return;
-    } else if (isPlainObject(binding)) {
+    } else if (isObject(binding)) {
       if (isReactive(binding)) {
         binding = toRefs(binding);
       }
@@ -2647,7 +2665,7 @@ function mixin(Vue) {
     var propsPlain = ['root', 'parent', 'refs', 'listeners', 'isServer', 'ssrContext'];
     var methodReturnVoid = ['emit'];
     propsPlain.forEach(function (key) {
-      var srcKey = "$" + key;
+      var srcKey = "$".concat(key);
       proxy(ctx, key, {
         get: function () {
           return vm[srcKey];
@@ -2658,7 +2676,7 @@ function mixin(Vue) {
     });
     updateVmAttrs(vm, ctx);
     methodReturnVoid.forEach(function (key) {
-      var srcKey = "$" + key;
+      var srcKey = "$".concat(key);
       proxy(ctx, key, {
         get: function () {
           return function () {
@@ -10470,6 +10488,88 @@ module.exports = require$$0;
 /***/ }),
 /* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "e", function() { return /* reexport */ setNuxtAppInstance; });
+__webpack_require__.d(__webpack_exports__, "b", function() { return /* reexport */ defineNuxtPlugin; });
+__webpack_require__.d(__webpack_exports__, "f", function() { return /* reexport */ useNuxtApp; });
+__webpack_require__.d(__webpack_exports__, "a", function() { return /* reexport */ vue_composition_api["b" /* computed */]; });
+__webpack_require__.d(__webpack_exports__, "c", function() { return /* reexport */ vue_composition_api["A" /* onMounted */]; });
+__webpack_require__.d(__webpack_exports__, "d", function() { return /* reexport */ vue_composition_api["J" /* ref */]; });
+__webpack_require__.d(__webpack_exports__, "g", function() { return /* reexport */ useState; });
+
+// UNUSED EXPORTS: isVue2, isVue3, defineNuxtComponent, useLazyAsyncData, useLazyFetch, useCookie, EffectScope, createApp, createRef, customRef, defineAsyncComponent, defineComponent, del, effectScope, getCurrentInstance, getCurrentScope, h, inject, isRaw, isReactive, isReadonly, isRef, markRaw, nextTick, onActivated, onBeforeMount, onBeforeUnmount, onBeforeUpdate, onDeactivated, onErrorCaptured, onScopeDispose, onServerPrefetch, onUnmounted, onUpdated, provide, proxyRefs, reactive, readonly, set, shallowReactive, shallowReadonly, shallowRef, toRaw, toRef, toRefs, triggerRef, unref, useAttrs, useCSSModule, useCssModule, useSlots, version, warn, watch, watchEffect, watchPostEffect, watchSyncEffect, useAsyncData, useFetch, useHydration, useRuntimeConfig, useRouter, useRoute, useNuxt2Meta
+
+// EXTERNAL MODULE: ./node_modules/@vue/composition-api/dist/vue-composition-api.mjs
+var vue_composition_api = __webpack_require__(0);
+
+// EXTERNAL MODULE: ./node_modules/@nuxt/bridge/dist/runtime/vue2-bridge.mjs + 1 modules
+__webpack_require__(1);
+// EXTERNAL MODULE: external "murmurhash-es"
+__webpack_require__(31);
+// EXTERNAL MODULE: external "cookie-es"
+__webpack_require__(8);
+
+// EXTERNAL MODULE: external "h3"
+__webpack_require__(32);
+
+// EXTERNAL MODULE: external "destr"
+__webpack_require__(33);
+const useState = (key, init) => {
+  const nuxtApp = useNuxtApp();
+
+  if (!nuxtApp.payload.useState) {
+    nuxtApp.payload.useState = {};
+  }
+
+  if (!Object(vue_composition_api["p" /* isReactive */])(nuxtApp.payload.useState)) {
+    nuxtApp.payload.useState = Object(vue_composition_api["H" /* reactive */])(nuxtApp.payload.useState);
+  }
+
+  if (!(key in nuxtApp.payload.useState)) {
+    Object(vue_composition_api["K" /* set */])(nuxtApp.payload.useState, key, void 0);
+  }
+
+  const state = Object(vue_composition_api["P" /* toRef */])(nuxtApp.payload.useState, key);
+
+  if (state.value === void 0 && init) {
+    state.value = init();
+  }
+
+  return state;
+};
+vue_composition_api["h" /* defineComponent */];
+let currentNuxtAppInstance;
+const setNuxtAppInstance = nuxt => {
+  currentNuxtAppInstance = nuxt;
+};
+function defineNuxtPlugin(plugin) {
+  return ctx => {
+    setNuxtAppInstance(ctx.$_nuxtApp);
+    plugin(ctx.$_nuxtApp);
+    setNuxtAppInstance(null);
+  };
+}
+const useNuxtApp = () => {
+  const vm = Object(vue_composition_api["k" /* getCurrentInstance */])();
+
+  if (!vm) {
+    if (!currentNuxtAppInstance) {
+      throw new Error("nuxt app instance unavailable");
+    }
+
+    return currentNuxtAppInstance;
+  }
+
+  return vm.proxy.$_nuxtApp;
+};
+// CONCATENATED MODULE: ./node_modules/@nuxt/bridge/dist/runtime/index.mjs
+
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return normalizeComponent; });
 /* globals __VUE_SSR_CONTEXT__ */
 
@@ -10569,87 +10669,6 @@ function normalizeComponent (
     options: options
   }
 }
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, "d", function() { return /* reexport */ setNuxtAppInstance; });
-__webpack_require__.d(__webpack_exports__, "a", function() { return /* reexport */ defineNuxtPlugin; });
-__webpack_require__.d(__webpack_exports__, "e", function() { return /* reexport */ useNuxtApp; });
-__webpack_require__.d(__webpack_exports__, "b", function() { return /* reexport */ vue_composition_api["A" /* onMounted */]; });
-__webpack_require__.d(__webpack_exports__, "c", function() { return /* reexport */ vue_composition_api["J" /* ref */]; });
-__webpack_require__.d(__webpack_exports__, "f", function() { return /* reexport */ useState; });
-
-// UNUSED EXPORTS: isVue2, isVue3, defineNuxtComponent, useLazyAsyncData, useLazyFetch, useCookie, EffectScope, computed, createApp, createRef, customRef, defineAsyncComponent, defineComponent, del, effectScope, getCurrentInstance, getCurrentScope, h, inject, isRaw, isReactive, isReadonly, isRef, markRaw, nextTick, onActivated, onBeforeMount, onBeforeUnmount, onBeforeUpdate, onDeactivated, onErrorCaptured, onScopeDispose, onServerPrefetch, onUnmounted, onUpdated, provide, proxyRefs, reactive, readonly, set, shallowReactive, shallowReadonly, shallowRef, toRaw, toRef, toRefs, triggerRef, unref, useAttrs, useCSSModule, useCssModule, useSlots, version, warn, watch, watchEffect, watchPostEffect, watchSyncEffect, useAsyncData, useFetch, useHydration, useRuntimeConfig, useRouter, useRoute, useNuxt2Meta
-
-// EXTERNAL MODULE: ./node_modules/@vue/composition-api/dist/vue-composition-api.mjs
-var vue_composition_api = __webpack_require__(0);
-
-// EXTERNAL MODULE: ./node_modules/@nuxt/bridge/dist/runtime/vue2-bridge.mjs + 1 modules
-__webpack_require__(1);
-// EXTERNAL MODULE: external "murmurhash-es"
-__webpack_require__(31);
-// EXTERNAL MODULE: external "cookie-es"
-__webpack_require__(8);
-
-// EXTERNAL MODULE: external "h3"
-__webpack_require__(32);
-
-// EXTERNAL MODULE: external "destr"
-__webpack_require__(33);
-const useState = (key, init) => {
-  const nuxtApp = useNuxtApp();
-
-  if (!nuxtApp.payload.useState) {
-    nuxtApp.payload.useState = {};
-  }
-
-  if (!Object(vue_composition_api["p" /* isReactive */])(nuxtApp.payload.useState)) {
-    nuxtApp.payload.useState = Object(vue_composition_api["H" /* reactive */])(nuxtApp.payload.useState);
-  }
-
-  if (!(key in nuxtApp.payload.useState)) {
-    Object(vue_composition_api["K" /* set */])(nuxtApp.payload.useState, key, void 0);
-  }
-
-  const state = Object(vue_composition_api["P" /* toRef */])(nuxtApp.payload.useState, key);
-
-  if (state.value === void 0 && init) {
-    state.value = init();
-  }
-
-  return state;
-};
-vue_composition_api["h" /* defineComponent */];
-let currentNuxtAppInstance;
-const setNuxtAppInstance = nuxt => {
-  currentNuxtAppInstance = nuxt;
-};
-function defineNuxtPlugin(plugin) {
-  return ctx => {
-    setNuxtAppInstance(ctx.$_nuxtApp);
-    plugin(ctx.$_nuxtApp);
-    setNuxtAppInstance(null);
-  };
-}
-const useNuxtApp = () => {
-  const vm = Object(vue_composition_api["k" /* getCurrentInstance */])();
-
-  if (!vm) {
-    if (!currentNuxtAppInstance) {
-      throw new Error("nuxt app instance unavailable");
-    }
-
-    return currentNuxtAppInstance;
-  }
-
-  return vm.proxy.$_nuxtApp;
-};
-// CONCATENATED MODULE: ./node_modules/@nuxt/bridge/dist/runtime/index.mjs
-
 
 
 /***/ }),
@@ -13584,7 +13603,7 @@ async function setContext(app, context) {
       error: context.error,
       base: app.router.options.base,
       env: {
-        "NITRO_PRESET": "netlify"
+        "NITRO_PRESET": "netlify_builder"
       }
     }; // Only set once
 
@@ -16951,7 +16970,7 @@ function shouldScrollToTop(route) {
 
 
 
-const _2b8de0d3 = () => interopDefault(__webpack_require__.e(/* import() | pages/index */ 5).then(__webpack_require__.bind(null, 66)));
+const _2b8de0d3 = () => interopDefault(__webpack_require__.e(/* import() | pages/index */ 5).then(__webpack_require__.bind(null, 70)));
 
 const emptyFn = () => {};
 
@@ -16965,6 +16984,9 @@ const routerOptions = {
   routes: [{
     path: "/",
     component: _2b8de0d3,
+    pathToRegexpOptions: {
+      "strict": true
+    },
     name: "index"
   }],
   fallback: false
@@ -16985,6 +17007,7 @@ function createRouter(ssrContext, config) {
 
   router.resolve = (to, current, append) => {
     if (typeof to === 'string') {
+      to = Object(external_ufo_["withTrailingSlash"])(to, !!Object(external_ufo_["stringifyQuery"])(Object(external_ufo_["getQuery"])(to)));
       to = Object(external_ufo_["normalizeURL"])(to);
     }
 
@@ -17138,7 +17161,7 @@ var staticRenderFns = [];
 // CONCATENATED MODULE: ./node_modules/.cache/nuxt/components/nuxt-error.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_nuxt_errorvue_type_script_lang_js_ = (nuxt_errorvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
-var componentNormalizer = __webpack_require__(3);
+var componentNormalizer = __webpack_require__(4);
 
 // CONCATENATED MODULE: ./node_modules/.cache/nuxt/components/nuxt-error.vue
 
@@ -17729,10 +17752,10 @@ const layouts = {
   }
 });
 // CONCATENATED MODULE: ./node_modules/.cache/nuxt/components/index.js
-const NuxtLogo = () => __webpack_require__.e(/* import() | components/nuxt-logo */ 1).then(__webpack_require__.bind(null, 67)).then(c => wrapFunctional(c.default || c));
-const Test1 = () => __webpack_require__.e(/* import() | components/test1 */ 2).then(__webpack_require__.bind(null, 60)).then(c => wrapFunctional(c.default || c));
-const Test2 = () => __webpack_require__.e(/* import() | components/test2 */ 3).then(__webpack_require__.bind(null, 61)).then(c => wrapFunctional(c.default || c));
-const Tutorial = () => __webpack_require__.e(/* import() | components/tutorial */ 4).then(__webpack_require__.bind(null, 63)).then(c => wrapFunctional(c.default || c)); // nuxt/nuxt.js#8607
+const NuxtLogo = () => __webpack_require__.e(/* import() | components/nuxt-logo */ 1).then(__webpack_require__.bind(null, 71)).then(c => wrapFunctional(c.default || c));
+const Test1 = () => __webpack_require__.e(/* import() | components/test1 */ 2).then(__webpack_require__.bind(null, 64)).then(c => wrapFunctional(c.default || c));
+const Test2 = () => __webpack_require__.e(/* import() | components/test2 */ 3).then(__webpack_require__.bind(null, 65)).then(c => wrapFunctional(c.default || c));
+const Tutorial = () => __webpack_require__.e(/* import() | components/tutorial */ 4).then(__webpack_require__.bind(null, 67)).then(c => wrapFunctional(c.default || c)); // nuxt/nuxt.js#8607
 
 function wrapFunctional(options) {
   if (!options || !options.functional) {
@@ -17775,7 +17798,7 @@ for (const name in components_namespaceObject) {
 var external_hookable_ = __webpack_require__(30);
 
 // EXTERNAL MODULE: ./node_modules/@nuxt/bridge/dist/runtime/index.mjs + 5 modules
-var runtime = __webpack_require__(4);
+var runtime = __webpack_require__(3);
 
 // CONCATENATED MODULE: ./node_modules/.cache/nuxt/runtime.app.plugin.04ecf7a7.mjs
 
@@ -17861,7 +17884,7 @@ function proxiedState(state) {
     }
 
   });
-  Object(runtime["d" /* setNuxtAppInstance */])(proxiedApp);
+  Object(runtime["e" /* setNuxtAppInstance */])(proxiedApp);
   inject('_nuxtApp', proxiedApp);
 });
 // EXTERNAL MODULE: external "axios"
@@ -18001,7 +18024,7 @@ const createAxiosInstance = axiosOptions => {
 });
 // CONCATENATED MODULE: ./node_modules/@nuxt/bridge/dist/runtime/capi.legacy.plugin.mjs
 
-/* harmony default export */ var capi_legacy_plugin = (Object(runtime["a" /* defineNuxtPlugin */])(nuxtApp => {
+/* harmony default export */ var capi_legacy_plugin = (Object(runtime["b" /* defineNuxtPlugin */])(nuxtApp => {
   nuxtApp._setupFns = [];
   const _originalSetup = nuxtApp.nuxt2Context.app.setup;
 
@@ -18062,7 +18085,7 @@ const vueMetaRenderer = nuxt => {
   };
 };
 
-/* harmony default export */ var nitro_bridge_server = (Object(runtime["a" /* defineNuxtPlugin */])(nuxtApp => {
+/* harmony default export */ var nitro_bridge_server = (Object(runtime["b" /* defineNuxtPlugin */])(nuxtApp => {
   const metaRenderers = [vueMetaRenderer];
   nuxtApp.callHook('meta:register', metaRenderers);
 
@@ -18090,6 +18113,11 @@ const vueMetaRenderer = nuxt => {
 // EXTERNAL MODULE: ./node_modules/.cache/nuxt/empty.js
 __webpack_require__(57);
 
+// CONCATENATED MODULE: ./plugins/connectors.js
+
+/* harmony default export */ var connectors = (Object(runtime["b" /* defineNuxtPlugin */])(nuxtApp => {
+  nuxtApp.provide('injected', () => 'my injected function'); // now available on `nuxtApp.$injected`
+}));
 // CONCATENATED MODULE: ./node_modules/.cache/nuxt/index.js
 
 
@@ -18116,6 +18144,8 @@ __webpack_require__(57);
  // Source: ./nitro-bridge.server.mjs (mode: 'server')
 
  // Source: ./nitro.client.mjs (mode: 'client')
+
+ // Source: ../../../plugins/connectors (mode: 'all')
 // Component: <ClientOnly>
 
 vue2_bridge["default"].component(vue_client_only_common_default.a.name, vue_client_only_common_default.a); // TODO: Remove in Nuxt 3: <NoSsr>
@@ -18327,6 +18357,10 @@ async function createApp(ssrContext, config = {}) {
   if ( typeof nitro_bridge_server === 'function') {
     await nitro_bridge_server(app.context, inject);
   }
+
+  if (typeof connectors === 'function') {
+    await connectors(app.context, inject);
+  } // Lock enablePreview in context
 
 
   await new Promise((resolve, reject) => {

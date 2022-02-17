@@ -192,7 +192,6 @@ function getModuleDependencies(id, rendererContext) {
   return dependencies;
 }
 function getAllDependencies(ids, rendererContext) {
-  var _a;
   const cacheKey = Array.from(ids).join(",");
   if (rendererContext._dependencySets[cacheKey]) {
     return rendererContext._dependencySets[cacheKey];
@@ -209,7 +208,7 @@ function getAllDependencies(ids, rendererContext) {
     Object.assign(allDeps.styles, deps.styles);
     Object.assign(allDeps.preload, deps.preload);
     Object.assign(allDeps.prefetch, deps.prefetch);
-    for (const dynamicDepId of ((_a = rendererContext.clientManifest[id]) == null ? void 0 : _a.dynamicImports) || []) {
+    for (const dynamicDepId of rendererContext.clientManifest[id]?.dynamicImports || []) {
       const dynamicDeps = getModuleDependencies(dynamicDepId, rendererContext);
       Object.assign(allDeps.prefetch, dynamicDeps.scripts);
       Object.assign(allDeps.prefetch, dynamicDeps.styles);
@@ -255,7 +254,7 @@ function renderPreloadLinks(ssrContext, rendererContext) {
 }
 function renderPrefetchLinks(ssrContext, rendererContext) {
   const { prefetch } = getRequestDependencies(ssrContext, rendererContext);
-  return Object.values(prefetch).map(({ path }) => `<link ${isModule(path) ? 'type="module" ' : ""}rel="prefetch" href="${rendererContext.publicPath}${path}">`).join("");
+  return Object.values(prefetch).map(({ path }) => `<link ${isModule(path) ? 'type="module" ' : ""}rel="prefetch${isCSS(path) ? " stylesheet" : ""}" href="${rendererContext.publicPath}${path}">`).join("");
 }
 function renderScripts(ssrContext, rendererContext) {
   const { scripts } = getRequestDependencies(ssrContext, rendererContext);
@@ -265,7 +264,7 @@ function createRenderer(createApp, renderOptions) {
   const rendererContext = createRendererContext(renderOptions);
   return {
     async renderToString(ssrContext) {
-      ssrContext._registeredComponents = ssrContext._registeredComponents || new Set();
+      ssrContext._registeredComponents = ssrContext._registeredComponents || /* @__PURE__ */ new Set();
       const _createApp = await Promise.resolve(createApp).then((r) => r.default || r);
       const app = await _createApp(ssrContext);
       const html = await renderOptions.renderToString(app, ssrContext);
@@ -524,7 +523,7 @@ const htmlTemplate = (params) => `<!DOCTYPE html>
 </html>
 `;
 
-const STATIC_ASSETS_BASE = "/_nuxt/static" + "/" + "1639740021";
+const STATIC_ASSETS_BASE = "/_nuxt/static" + "/" + "1645097501";
 const PAYLOAD_JS = "/payload.js";
 const getClientManifest = cachedImport(() => import('./client.manifest.mjs'));
 const getSSRApp = cachedImport(() => import('./server.mjs'));
