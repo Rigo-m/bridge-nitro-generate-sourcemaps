@@ -1,7 +1,5 @@
-import { useState, ref } from '#app'
-
-const shared = ref('test')
+import { useState } from '#app'
 
 export const useTest = () => {
-  return { state: useState('test', () => 'something'), shared }
+  return { state: useState('test', () => 'something') }
 }
