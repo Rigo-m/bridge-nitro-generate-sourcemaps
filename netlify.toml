@@ -1,0 +1,6 @@
+[build]
+  command = "yarn setup && yarn build && yarn move:builder"
+  publish = "dist"
+
+[functions]
+  directory = "functions/"
