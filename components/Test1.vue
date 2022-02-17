@@ -26,4 +26,10 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.test {
+  // applying some styles
+  transform: scale(1.5);
+  transform-origin: left center;
+}
+</style>
