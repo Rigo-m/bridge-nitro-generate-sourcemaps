@@ -11,5 +11,7 @@ export default {}
 <style lang="scss" scoped>
 .someclass {
   transform: scale(2);
+  transform-origin: left top;
+  background-color: blue;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Tutorial />
+    <nuxt-link :to="'/something-else'">Click me</nuxt-link>
     <Tutorial />
   </div>
 </template>
