@@ -524,7 +524,7 @@ const htmlTemplate = (params) => `<!DOCTYPE html>
 </html>
 `;
 
-const STATIC_ASSETS_BASE = "/_nuxt/static" + "/" + "1639563984";
+const STATIC_ASSETS_BASE = "/_nuxt/static" + "/" + "1639740021";
 const PAYLOAD_JS = "/payload.js";
 const getClientManifest = cachedImport(() => import('./client.manifest.mjs'));
 const getSSRApp = cachedImport(() => import('./server.mjs'));

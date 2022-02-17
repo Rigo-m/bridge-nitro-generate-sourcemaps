@@ -23,7 +23,7 @@ export default defineNuxtConfig({
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: ['~/plugins/connectors'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -39,16 +39,40 @@ export default defineNuxtConfig({
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '~/modules/sample-module.js',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {},
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {},
+  build: {
+    template: '~/vue-app',
+  },
 
   bridge: {
     nitro: true,
     vite: false,
+    app: {},
+    capi: {},
+    transpile: true,
+    scriptSetup: false,
+    autoImports: false,
+    constraints: true,
+    meta: false,
+    postcss8: true,
+    typescript: false,
+    resolve: true,
+  },
+
+  router: {
+    trailingSlash: true,
+  },
+  nitro: {
+    output: {
+      dir: '{{ _nuxt.rootDir }}/.output',
+      publicDir: '{{ _nuxt.rootDir }}/dist',
+    },
+    preset: 'netlify_builder',
   },
 })

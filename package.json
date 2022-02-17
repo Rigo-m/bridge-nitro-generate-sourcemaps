@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nuxi",
+    "dev": "nuxi dev",
     "build": "nuxi generate",
     "start": "nuxi start",
     "generate": "nuxi generate",
@@ -13,11 +13,11 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
     "core-js": "^3.15.1",
-    "nuxt-edge": "^2.16.0-27325455.c1d02ea3"
+    "nuxt-edge": "latest"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.14.7",
-    "@nuxt/bridge": "npm:@nuxt/bridge-edge",
+    "@nuxt/bridge": "npm:@nuxt/bridge-edge@3.0.0-27328916.daec432",
     "@nuxtjs/eslint-config": "^6.0.1",
     "@nuxtjs/eslint-module": "^3.0.2",
     "eslint": "^7.29.0",
