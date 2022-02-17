@@ -1,6 +1,18 @@
 <template>
   <div class="someclass">
     {{ $route.params.slug }}
+    <Tutorial />
+    <Tutorial />
+    <Tutorial />
+    <Tutorial />
+    <Tutorial />
+    <Tutorial />
+    <Tutorial />
+    <Tutorial />
+    <Tutorial />
+    <Tutorial />
+    <Tutorial />
+    <Tutorial />
   </div>
 </template>
 
