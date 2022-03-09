@@ -4,8 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "nuxi dev --port 1080",
-    "storybook": "nuxt storybook",
-    "storybook:build": "nuxt storybook build",
     "build": "NODE_OPTIONS='--max-old-space-size=8192' nuxi generate",
     "start": "node functions/nitro/server/index.mjs",
     "generate": "nuxi generate",
@@ -22,13 +20,14 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.14.7",
-    "@nuxt/bridge": "npm:@nuxt/bridge-edge@3.0.0-27328916.daec432",
+    "@nuxt/bridge": "npm:@nuxt/bridge-edge@latest",
     "@nuxtjs/eslint-config": "^6.0.1",
     "@nuxtjs/eslint-module": "^3.0.2",
     "eslint": "^7.29.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-nuxt": "^2.0.0",
     "eslint-plugin-vue": "^7.12.1",
+    "netlify-cli": "^9.9.0",
     "prettier": "^2.3.2",
     "sass": "^1.49.7",
     "sass-loader": "^10"
