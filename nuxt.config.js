@@ -53,10 +53,8 @@ export default defineNuxtConfig({
   bridge: {
     nitro: true,
     vite: false,
-    app: true,
-    capi: {
-      legacy: false,
-    },
+    app: {},
+    capi: {},
     transpile: true,
     scriptSetup: false,
     autoImports: false,
